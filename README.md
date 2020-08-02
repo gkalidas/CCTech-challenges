@@ -1,2 +1,5 @@
-# CCTech-challenges
-This page contains challenges for CCTech's hiring activity for software developer given to me.
+Check if point p lies inside a polygon or not
+
+working for three examples
+
+need modification or expert to work with fourth example.

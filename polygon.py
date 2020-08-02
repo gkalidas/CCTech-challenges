@@ -21,3 +21,17 @@ def orientation(p, q, r):
         return 1
     else:
         return -1
+
+def on_segment(p, q, r):
+    """
+    Function is used to check if point q lies on a segment(p,q) or not
+    Returns
+    True if point lies on a segment else False
+    """
+    if q.x <= max(p.x, r.x) and\
+        q.x >= min(p.x, r.x) and\
+            q.y <= max(p.y, r.y) and\
+                q.y >= min(p.y, r.y):
+                return True
+    else:
+        return False

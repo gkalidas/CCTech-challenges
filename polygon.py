@@ -69,3 +69,49 @@ def do_intersect(p1, q1, p2, q2):
         return True
     
     return False
+
+def is_inside_polygon(polygon, n , p):
+    """
+    Function to check if point p lies inside a polygon or not
+    Return
+    True if point lies inside the polygon else False
+    """
+    
+    # print("POLYGON",polygon,"N", n,"P", p)
+    # check if there are atleast three vertices for the polygon
+    if n < 3:
+        return False
+
+    # an infinite point
+    extreme = (10000, p[1])
+    # print("EXTREME ", extreme)
+
+    count, i = 0, 0
+    
+    while polygon:
+        print (" i is ", i)
+        print("Polygon points ", polygon)
+        p1 = polygon[i]
+        if i + 1 == len(polygon):
+            p2 = polygon[0]
+        else:
+            p2 = polygon[i + 1]
+        if (do_intersect(p1, p2, p, extreme)):
+            if(orientation(polygon[i], p, polygon[next_vertices]) == 0):
+                return on_segment(polygon[i], p, polygon[next_vertices])
+            count += 1
+        i += 1
+
+    if count % 2 == 0:
+        return True
+    return False
+
+polygon1 = [[0, 0],[10, 0], [10, 10], [0, 10]]
+n = len(polygon1)
+print("length of the polygon", n)
+point = [20,20]
+
+if is_inside_polygon(polygon1, n, point):
+    print("Inside the polygon")
+else:
+    print("Outside the polygon")

@@ -1,7 +1,5 @@
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+# Needed this
+from itertools import cycle
 
 
 def orientation(p, q, r):
@@ -10,17 +8,16 @@ def orientation(p, q, r):
     returns
     0   if points are collinear
     1   if clockwise
-    -1  if counterclockwise
+    2  if counterclockwise
     """
-    value = ((q.y - p.y) * (r.x - q.x)) - \
-    ((q.x - p.x) * (r.y - q.y))
-
+    
+    value = ((q[1] - p[1]) * (r[0] - q[0])) - ((q[0] - p[0]) * (r[1] - q[1]))
     if value == 0:
         return 0
     if value > 0:
         return 1
     else:
-        return -1
+        return 2
 
 def on_segment(p, q, r):
     """
@@ -28,10 +25,10 @@ def on_segment(p, q, r):
     Returns
     True if point lies on a segment else False
     """
-    if q.x <= max(p.x, r.x) and\
-        q.x >= min(p.x, r.x) and\
-            q.y <= max(p.y, r.y) and\
-                q.y >= min(p.y, r.y):
+    if q[0] <= max(p[0], r[0]) and\
+        q[0] >= min(p[0], r[0]) and\
+            q[1] <= max(p[1], r[1]) and\
+                q[1] >= min(p[1], r[1]):
                 return True
     else:
         return False
@@ -49,9 +46,10 @@ def do_intersect(p1, q1, p2, q2):
     o2 = orientation(p1, q1, q2)
     o3 = orientation(p2, q2, p1)
     o4 = orientation(p2, q2, q1)
-
+    
     # general case
     if o1 != o2 and o3 != o4:
+
         return True
 
     # special cases
@@ -59,16 +57,17 @@ def do_intersect(p1, q1, p2, q2):
     if (o1 == 0 and on_segment(p1, p2, q1)):
         return True
 
-    if (o2 == 0 and on_segment(p1, q2, q1)):
+    elif (o2 == 0 and on_segment(p1, q2, q1)):
         return True
 
-    if (o3 == 0 and on_segment(p2, p1, q2)):
+    elif (o3 == 0 and on_segment(p2, p1, q2)):
         return True
 
-    if (o4 == 0 and on_segment((p2, q2, q2))):
+    elif (o4 == 0 and on_segment(p2, q1, q2)):
         return True
-    
-    return False
+
+    else:
+        return False
 
 def is_inside_polygon(polygon, n , p):
     """
@@ -77,41 +76,53 @@ def is_inside_polygon(polygon, n , p):
     True if point lies inside the polygon else False
     """
     
-    # print("POLYGON",polygon,"N", n,"P", p)
     # check if there are atleast three vertices for the polygon
     if n < 3:
         return False
 
     # an infinite point
     extreme = (10000, p[1])
-    # print("EXTREME ", extreme)
 
-    count, i = 0, 0
+    count = 0
     
-    while polygon:
-        print (" i is ", i)
-        print("Polygon points ", polygon)
-        p1 = polygon[i]
-        if i + 1 == len(polygon):
-            p2 = polygon[0]
-        else:
-            p2 = polygon[i + 1]
-        if (do_intersect(p1, p2, p, extreme)):
-            if(orientation(polygon[i], p, polygon[next_vertices]) == 0):
-                return on_segment(polygon[i], p, polygon[next_vertices])
-            count += 1
-        i += 1
+    licycle = cycle(polygon)
+    nextelem = next(licycle)
 
-    if count % 2 == 0:
+    for point in polygon:
+        p1, p2 = nextelem, next(licycle)
+        if (do_intersect(p1, p2, p, extreme)):
+            if(orientation(p1, p, p2) == 0):
+                result = on_segment(p1, p, p2) 
+                return result
+            count += 1
+    if count % 2 == 1:
         return True
     return False
 
+# example one
 polygon1 = [[0, 0],[10, 0], [10, 10], [0, 10]]
 n = len(polygon1)
-print("length of the polygon", n)
-point = [20,20]
+point = [20,20]   # False
+# point = [5, 5]    # True
+
+# example two
+# polygon2 = [[0, 0], [5, 5], [5, 0]]
+# n = len(polygon1)
+# point = [20,20]   # False
+
+# example three
+# polygon3 = [[1,0], [8,3], [8,8], [1,5]]
+# n = len(polygon1)
+# point = [3,5]     # True
+
+# example four
+# polygon4 = [[-3,2], [-2,-0.8], [0,1.2], [2.2,0], [2,4.5]]
+# n = len(polygon1)
+# point = [0, 0]     # False
 
 if is_inside_polygon(polygon1, n, point):
-    print("Inside the polygon")
+    print(f"The point {point} is inside the polygon")
+    print(True)
 else:
-    print("Outside the polygon")
+    print(f"The point {point} is outside the polygon")
+    print(False)
